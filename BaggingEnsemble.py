@@ -39,7 +39,7 @@ class BaggingEnsemble(object):
             self.ensemble_.append(clone(self.base_estimatros[i]).fit(X_train[self.subspace[i]], y_train[self.subspace[i]]))
 
     # Predykcja z wybraną metodą kombinacji
-    def predict(self, X_test, type_voting):
+    def predict(self, X_test, type_voting='hard'):
         # Sprawdzenie czy modele sa wyuczone
         check_is_fitted(self, "classes_")
         # Sprawdzenie poprawności danych
