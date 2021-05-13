@@ -14,6 +14,14 @@ class BaggingEnsemble(object):
         self.type_voting = type_voting # Rodzaj kombinacja
         self.random_state = random_state # Ziarno losowości
 
+    def ensemble_support_matrix(self, X):
+        # Wyliczenie macierzy wsparcia
+        probas_ = []
+        for i, member_clf in enumerate(self.ensemble_):
+            probas_.append(member_clf.predict_proba(X))
+        print(f'Wsparcia: probas_')
+        return np.array(probas_)
+
     # Zrobienie baggingu i wyuczenie wszytskich modeli
     def fit(self, X_train, y_train):
         X_train, y_train = check_X_y(X_train, y_train) # Sprawdzenie czy Z i y jest tego samegro rozmiaru
@@ -43,7 +51,6 @@ class BaggingEnsemble(object):
             raise ValueError("number of features does not match")
 
         predict_results = []
-
         # Właściwy kod metod kombinacji
         if self.type_voting == 'hard':
             for X_element in iter(X_test):
@@ -53,16 +60,36 @@ class BaggingEnsemble(object):
                     pred_.append(member_clf.predict(X_element.reshape(1, -1)))
                 new_pred = np.concatenate(pred_, axis=0)
                 predict_results.append(statistics.mode(new_pred))
-
         elif self.type_voting == 'soft_mean':
-            print("Średnie")
+            esm = self.ensemble_support_matrix(X_test)
+            #Wyliczenie sredniej wartosci wsparcia
+            average_support = np.mean(esm, axis=0)
+            #Wskazanie etykiet z największymi wartościami (średnimi)
+            prediction = np.argmax(average_support, axis=1)
+            return self.classes_[prediction]
 
         elif self.type_voting == 'soft_max':
-            print("Max")
+            esm = self.ensemble_support_matrix(X_test)
+            # Wyliczenie maksymalnej wartości wsparcia dla algorytmów
+            max_support = np.max(esm, axis=0)
+            # Wskazanie etykiety z największymi wartościami (maksów)
+            prediction = np.argmax(max_support, axis=1)
+            return self.classes_[prediction]
 
         elif self.type_voting == 'soft_min':
-            print("Min")
+            esm = self.ensemble_support_matrix(X_test)
+            # Wyliczenie minimalnej wartości wsparcia dla algorytmów
+            min_support = np.min(esm, axis=0)
+            # Wskazanie etykiety z największymi wartościami (minimów)
+            prediction = np.argmax(min_support, axis=1)
+            return self.classes_[prediction]
         else:
-            print("Średnie")
             raise Exception("Wrong combination flag")
         return predict_results
+
+    def ensemble_support_matrix(self, X):
+        # Wyliczenie macierzy wsparcia
+        probas_ = []
+        for member_clf in self.ensemble_:
+            probas_.append(member_clf.predict_proba(X))
+        return np.array(probas_)

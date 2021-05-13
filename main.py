@@ -11,9 +11,9 @@ from sklearn.model_selection import train_test_split
 
 
 def add_data_sets_files():
-    data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
+    data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ',', True))
     data_sets.append(PrepareDataSets.PrepareDataSets('Iris.csv', ','))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv'))
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';', True))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
@@ -59,13 +59,18 @@ data = matched_obj.data
 
 # data = [x for x in data_sets if x.n == 'Iris2.csv']
 
+# ---------------- Test metod głosowaia  ------------- #
+data = pd.read_csv('titanic.csv', ';')
 X = data.iloc[:, :-1]
 y = data.iloc[:, -1]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-BE = BaggingEnsemble.BaggingEnsemble([DecisionTreeClassifier(), SVC(), KNeighborsClassifier(), GaussianNB()])
-
-BE.fit(X_train, y_train)
-res = BE.predict(X_test)
+combinations = ['hard', 'soft_mean', 'soft_min', 'soft_max']
+for comb in combinations:
+    BE = BaggingEnsemble.BaggingEnsemble([DecisionTreeClassifier(), SVC(probability=True), KNeighborsClassifier(), GaussianNB()], 'soft_min')
+    BE.fit(X_train, y_train)
+    res = BE.predict(X_test)
+    print(f'Accuracy {comb}: {accuracy_score(y_test, res)}')
+# ---------------- Test metod głosowaia (end) ------------- #
 
 occ_dict = {}
 
@@ -76,7 +81,7 @@ for item in res:
         occ_dict[item] += 1
 
 print(occ_dict)
-print(f'Accuracy: {accuracy_score(y_test, res)}')
+
 
 
 
