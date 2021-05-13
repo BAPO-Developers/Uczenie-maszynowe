@@ -60,11 +60,12 @@ class BaggingEnsemble(object):
                     pred_.append(member_clf.predict(X_element.reshape(1, -1)))
                 new_pred = np.concatenate(pred_, axis=0)
                 predict_results.append(statistics.mode(new_pred))
+
         elif self.type_voting == 'soft_mean':
             esm = self.ensemble_support_matrix(X_test)
-            #Wyliczenie sredniej wartosci wsparcia
+            # Wyliczenie sredniej wartosci wsparcia
             average_support = np.mean(esm, axis=0)
-            #Wskazanie etykiet z największymi wartościami (średnimi)
+            # Wskazanie etykiet z największymi wartościami (średnimi)
             prediction = np.argmax(average_support, axis=1)
             return self.classes_[prediction]
 

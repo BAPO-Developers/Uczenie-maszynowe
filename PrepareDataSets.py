@@ -25,3 +25,6 @@ class PrepareDataSets(object):
             print('File name:', self.file_name)
             print("Number of columns ", self.n_atributes)
             print("Number of rows ", self.n_instances)
+        return self.data
+
+
