@@ -1,5 +1,6 @@
 import BaggingEnsemble as bg
 import PrepareDataSets
+import Statistic
 import Charts
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
@@ -89,66 +90,20 @@ base_clf = [DecisionTreeClassifier(random_state=42), SVC(probability=True), KNei
 data = pd.read_csv('titanic.csv', ';')
 X = data.iloc[:, :-1]
 y = data.iloc[:, -1]
-clfs = {
-    'GNB': GaussianNB(),
-    'kNN': KNeighborsClassifier(),
-    'Tree (CART)': DecisionTreeClassifier(random_state=42),
-    'Hetero Bagging': bg.BaggingEnsemble(base_clf)
-}
+clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=42), bg.BaggingEnsemble(base_clf)]
+names = ['GNB', 'kNN', 'Tree (CART)', 'Hetero Bagging']
 n_splits = 5
 kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
 scores = np.zeros((len(clfs), n_splits))
 for fold_id, (train, test) in enumerate(kf.split(X, y)):
-    for clf_id, clf_name in enumerate(clfs):
-        clfs[clf_name].fit(X.iloc[train], y.iloc[train])
-        y_pred = clfs[clf_name].predict(X.iloc[test])
+    for clf_id, clf in enumerate(clfs):
+        clf.fit(X.iloc[train], y.iloc[train])
+        y_pred = clf.predict(X.iloc[test])
         scores[clf_id, fold_id] = accuracy_score(y[test], y_pred)
 mean_accyracy = np.mean(scores, axis=1)
 
+Statistic.t_student(clfs, names, scores, 0.05, True)
 
-alfa = .05
-t_statistic = np.zeros((len(clfs), len(clfs)))
-p_value = np.zeros((len(clfs), len(clfs)))
-
-for i in range(len(clfs)):
-    for j in range(len(clfs)):
-        t_statistic[i, j], p_value[i, j] = ttest_ind(scores[i], scores[j])
-
-advantage = np.zeros((len(clfs), len(clfs)))
-advantage[t_statistic > 0] = 1
-
-significance = np.zeros((len(clfs), len(clfs)))
-significance[p_value <= alfa] = 1
-
-stat_better = significance * advantage
-
-#Dadne printownie tabeli
-headers_array_in_array = [] #Tabela z nazwami w formacie np [["GNB"], ["kNN"], ["CART"]]
-headers_array = [] #Tabela z nazwami w formacje ["GNB", "kNN", "CART"]
-for name in clfs.keys():
-    temp = []
-    temp.append(name)
-    headers_array.append(name)
-    headers_array_in_array.append(temp)
-headers_array_in_array = np.array(headers_array_in_array)
-
-
-t_statistic_table = np.concatenate((headers_array_in_array, t_statistic), axis=1)
-t_statistic_table = tabulate(t_statistic_table, headers_array, floatfmt=".2f")
-
-p_value_table = np.concatenate((headers_array_in_array, p_value), axis=1)
-p_value_table = tabulate(p_value_table, headers_array, floatfmt=".2f")
-
-advantage_table = tabulate(np.concatenate((headers_array_in_array, advantage), axis=1), headers_array)
-
-significance_table = tabulate(np.concatenate((headers_array_in_array, significance), axis=1), headers_array)
-
-stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
-
-print("t-statistic:\n", t_statistic_table, "\n\np-value:\n", p_value_table)
-print("Advantage:\n", advantage_table)
-print("Statistical significance (alpha = 0.05):\n", significance_table)
-print("Statistically significantly better:\n", stat_better_table)
 
 
 
