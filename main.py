@@ -17,9 +17,9 @@ from tabulate import tabulate
 dict = {'one': 11, 'two:': 22, 'tree': 33}
 
 def add_data_sets_files():
-    data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ',', True))
+    data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
     data_sets.append(PrepareDataSets.PrepareDataSets('Iris.csv', ','))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';', True))
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
@@ -104,8 +104,7 @@ for fold_id, (train, test) in enumerate(kf.split(X, y)):
         y_pred = clfs[clf_name].predict(X.iloc[test])
         scores[clf_id, fold_id] = accuracy_score(y[test], y_pred)
 mean_accyracy = np.mean(scores, axis=1)
-print(mean_accyracy)
-print(scores)
+
 
 alfa = .05
 t_statistic = np.zeros((len(clfs), len(clfs)))
@@ -114,13 +113,45 @@ p_value = np.zeros((len(clfs), len(clfs)))
 for i in range(len(clfs)):
     for j in range(len(clfs)):
         t_statistic[i, j], p_value[i, j] = ttest_ind(scores[i], scores[j])
-print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
-headers = np.array(clfs.keys())
 
 advantage = np.zeros((len(clfs), len(clfs)))
 advantage[t_statistic > 0] = 1
-print(advantage)
-print(headers)
+
+significance = np.zeros((len(clfs), len(clfs)))
+significance[p_value <= alfa] = 1
+
+stat_better = significance * advantage
+
+#Dadne printownie tabeli
+headers_array_in_array = [] #Tabela z nazwami w formacie np [["GNB"], ["kNN"], ["CART"]]
+headers_array = [] #Tabela z nazwami w formacje ["GNB", "kNN", "CART"]
+for name in clfs.keys():
+    temp = []
+    temp.append(name)
+    headers_array.append(name)
+    headers_array_in_array.append(temp)
+headers_array_in_array = np.array(headers_array_in_array)
+
+
+t_statistic_table = np.concatenate((headers_array_in_array, t_statistic), axis=1)
+t_statistic_table = tabulate(t_statistic_table, headers_array, floatfmt=".2f")
+
+p_value_table = np.concatenate((headers_array_in_array, p_value), axis=1)
+p_value_table = tabulate(p_value_table, headers_array, floatfmt=".2f")
+
+advantage_table = tabulate(np.concatenate((headers_array_in_array, advantage), axis=1), headers_array)
+
+significance_table = tabulate(np.concatenate((headers_array_in_array, significance), axis=1), headers_array)
+
+stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
+
+print("t-statistic:\n", t_statistic_table, "\n\np-value:\n", p_value_table)
+print("Advantage:\n", advantage_table)
+print("Statistical significance (alpha = 0.05):\n", significance_table)
+print("Statistically significantly better:\n", stat_better_table)
+
+
+
 
 # occ_dict = {}
 #
