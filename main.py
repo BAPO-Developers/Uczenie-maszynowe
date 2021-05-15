@@ -15,7 +15,7 @@ from sklearn.model_selection import KFold
 import numpy as np
 from scipy.stats import ttest_ind
 from tabulate import tabulate
-dict = {'one': 11, 'two:': 22, 'tree': 33}
+
 
 def add_data_sets_files():
     data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
@@ -23,23 +23,23 @@ def add_data_sets_files():
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[8] Appendicitis//appendicitis.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[9] Tic-Tac-Toe//tic-tac-toe.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[10] Heart//heart.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[11] Wine//wine.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[12] Australian Credit//australian.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[13] Breast Cancer Wisconcil//wisconsin.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[14] Keppler//ezgo.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[15] Magic Gamma//magic.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[16] Ringnorm//ring.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[17] South African Hearth//saheart.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[18] Titanic//titanic.csv'))
-    data_sets.append(
-        PrepareDataSets.PrepareDataSets('Data sets//[19] Congressional Voting Records//housevotes.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[8] Appendicitis//appendicitis.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[9] Tic-Tac-Toe//tic-tac-toe.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[10] Heart//heart.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[11] Wine//wine.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[12] Australian Credit//australian.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[13] Breast Cancer Wisconcil//wisconsin.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[14] Keppler//egzo.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[15] Magic Gamma//magic.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[16] Ringnorm//ring.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[17] South African Hearth//saheart.csv'))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[18] Titanic//titanic.csv'))
+    # data_sets.append(
+    #     PrepareDataSets.PrepareDataSets('Data sets//[19] Congressional Voting Records//housevotes.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[20] Credit Approval//crx.csv'))
 
 
@@ -55,22 +55,42 @@ def show_data_sets_chart():
 
 
 # ----------------==================--------------- CODE START HERE ----------------==================---------------
-# data_t_t_class = PrepareDataSets.PrepareDataSets('Data sets//[9] Tic-Tac-Toe//tic-tac-toe.csv')
-# data_t_t = data_t_t_class.data
-
+random_state_decision_trees = 42
 data_sets = []
-# # data = pd.read_csv('Iris2.csv')
 add_data_sets_files()
-matched_obj = next(x for x in data_sets if x.file_name == 'monk-2')
-data = matched_obj.data
 
+base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
+             KNeighborsClassifier(), GaussianNB()]
+clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=random_state_decision_trees),
+        bg.BaggingEnsemble(base_clfs)]
+names = ['GNB', 'kNN', 'Tree (CART)', 'Hetero Bagging']
+combinations = ['hard', 'soft_mean', 'soft_min', 'soft_max']
+n_splits = 5
+kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
+scores = np.zeros((len(clfs), len(data_sets), n_splits))
+for data_id, single_data in enumerate(data_sets):
+    print(f'FILE: {single_data.file_name}')
+    X = single_data.data.iloc[:, :-1]
+    y = single_data.data.iloc[:, -1]
+    for fold_id, (train, test) in enumerate(kf.split(X, y)):
+        for clf_id, clf in enumerate(clfs):
+            clf.fit(X.iloc[train], y.iloc[train])
+            y_pred = clf.predict(X.iloc[test])
+            scores[clf_id, data_id, fold_id] = accuracy_score(y[test], y_pred)
+print(scores)
+mean_accuracy = np.mean(scores, axis=1)
+
+Statistic.t_student(clfs, names, scores, 0.05, True)
 
 # show_data_sets_chart()
 
 # data = [x for x in data_sets if x.n == 'Iris2.csv']
 
 # ---------------- Test metod głosowaia  ------------- #
-
+# matched_obj = next(x for x in data_sets if x.file_name == 'monk-2') # write here file number as data
+# data = matched_obj.data
+# X = data.iloc[:, :-1]
+# y = data.iloc[:, -1]
 # clfs = [DecisionTreeClassifier(), SVC(probability=True), KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=1000)]
 #
 # for single_data in data_sets:
@@ -86,26 +106,6 @@ data = matched_obj.data
 #         print(f'Accuracy {comb}: {accuracy_score(y_test, res)}')
 #     print('---------------------------------------\n')
 # # ---------------- Test metod głosowaia (end) ------------- #
-base_clf = [DecisionTreeClassifier(random_state=42), SVC(probability=True), KNeighborsClassifier(), GaussianNB()]
-data = pd.read_csv('titanic.csv', ';')
-X = data.iloc[:, :-1]
-y = data.iloc[:, -1]
-clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=42), bg.BaggingEnsemble(base_clf)]
-names = ['GNB', 'kNN', 'Tree (CART)', 'Hetero Bagging']
-n_splits = 5
-kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
-scores = np.zeros((len(clfs), n_splits))
-for fold_id, (train, test) in enumerate(kf.split(X, y)):
-    for clf_id, clf in enumerate(clfs):
-        clf.fit(X.iloc[train], y.iloc[train])
-        y_pred = clf.predict(X.iloc[test])
-        scores[clf_id, fold_id] = accuracy_score(y[test], y_pred)
-mean_accyracy = np.mean(scores, axis=1)
-
-Statistic.t_student(clfs, names, scores, 0.05, True)
-
-
-
 
 
 # occ_dict = {}
@@ -117,8 +117,6 @@ Statistic.t_student(clfs, names, scores, 0.05, True)
 #         occ_dict[item] += 1
 #
 # print(occ_dict)
-
-
 
 
 # accuracy_score(y_test, prediction)

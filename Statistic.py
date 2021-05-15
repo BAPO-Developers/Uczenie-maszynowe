@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import ttest_ind
 from tabulate import tabulate
 
+
 def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
     t_statistic = np.zeros((len(clfs), len(clfs)))
     p_value = np.zeros((len(clfs), len(clfs)))
@@ -10,7 +11,7 @@ def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
     for i in range(len(clfs)):
         for j in range(len(clfs)):
             t_statistic[i, j], p_value[i, j] = ttest_ind(scores[i], scores[j])
-    print(t_statistic)
+    # print(t_statistic)
     # Wyliczenie przewagi danego algorytmu
     advantage = np.zeros((len(clfs), len(clfs)))
     advantage[t_statistic > 0] = 1

@@ -50,6 +50,7 @@ class BaggingEnsemble(object):
         if X_test.shape[1] != self.n_features:
             raise ValueError("number of features does not match")
 
+        esm = self.ensemble_support_matrix(X_test)
         predict_results = []
         # Właściwy kod metod kombinacji
         if type_voting == 'hard':
@@ -62,7 +63,6 @@ class BaggingEnsemble(object):
                 predict_results.append(statistics.mode(new_pred))
 
         elif type_voting == 'soft_mean':
-            esm = self.ensemble_support_matrix(X_test)
             # Wyliczenie sredniej wartosci wsparcia
             average_support = np.mean(esm, axis=0)
             # Wskazanie etykiet z największymi wartościami (średnimi)
@@ -70,7 +70,6 @@ class BaggingEnsemble(object):
             return self.classes_[prediction]
 
         elif type_voting == 'soft_max':
-            esm = self.ensemble_support_matrix(X_test)
             # Wyliczenie maksymalnej wartości wsparcia dla algorytmów
             max_support = np.max(esm, axis=0)
             # Wskazanie etykiety z największymi wartościami (maksów)
@@ -78,7 +77,6 @@ class BaggingEnsemble(object):
             return self.classes_[prediction]
 
         elif type_voting == 'soft_min':
-            esm = self.ensemble_support_matrix(X_test)
             # Wyliczenie minimalnej wartości wsparcia dla algorytmów
             min_support = np.min(esm, axis=0)
             # Wskazanie etykiety z największymi wartościami (minimów)
