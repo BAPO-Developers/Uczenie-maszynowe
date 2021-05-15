@@ -23,6 +23,7 @@ def add_data_sets_files():
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
+
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))
@@ -80,8 +81,7 @@ for data_id, single_data in enumerate(data_sets):
 print(scores)
 mean_accuracy = np.mean(scores, axis=1)
 
-Statistic.t_student(clfs, names, scores, 0.05, True)
-
+t_statistic_result = Statistic.t_student_for_all_files(clfs, names, scores, 0.05, True)
 # show_data_sets_chart()
 
 # data = [x for x in data_sets if x.n == 'Iris2.csv']
