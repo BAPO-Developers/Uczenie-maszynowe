@@ -100,12 +100,6 @@ def show_general_scores():
     print('F1:')
     print([float(sum(l))/len(l) for l in zip(*np.mean(score_f1, axis=2).T)])
 
-
-# def show_statistics():
-#     for score in all_scores:
-#         print(f'\n\nTest t-Studenta: \n{Statistic.t_student_for_all_files(clfs, names, score, 0.05)}\n')
-#         print(f'\n\nTest Wilcoxona: \n{Statistic.wilcoxon(clfs, names, score)}\n')
-
 # ----------------==================--------------- CODE START HERE ----------------==================---------------
 
 
