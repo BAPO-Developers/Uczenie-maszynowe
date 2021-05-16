@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import ttest_ind
 from tabulate import tabulate
 
+
 def t_student_for_all_files(clfs, headers_array, scores, alfa = .05, print_result = False):
     shape = scores.shape
     number_of_files = shape[1]
@@ -9,6 +10,7 @@ def t_student_for_all_files(clfs, headers_array, scores, alfa = .05, print_resul
     for i in range(number_of_files):
         rezult += t_student(clfs, headers_array, scores[:, i, :], alfa, print_result)
     return rezult
+
 
 def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
     t_statistic = np.zeros((len(clfs), len(clfs)))

@@ -14,17 +14,18 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 import numpy as np
 from scipy.stats import ttest_ind
-from tabulate import tabulate
+import time
+import math
 
 
 def add_data_sets_files():
-    data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Iris.csv', ','))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Iris.csv', ','))
+
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
-
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
@@ -56,6 +57,7 @@ def show_data_sets_chart():
 
 
 # ----------------==================--------------- CODE START HERE ----------------==================---------------
+start_time = time.time()
 random_state_decision_trees = 42
 data_sets = []
 add_data_sets_files()
@@ -69,19 +71,34 @@ combinations = ['hard', 'soft_mean', 'soft_min', 'soft_max']
 n_splits = 5
 kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
 scores = np.zeros((len(clfs), len(data_sets), n_splits))
+
 for data_id, single_data in enumerate(data_sets):
-    print(f'FILE: {single_data.file_name}')
+    # print(f'FILE: {single_data.file_name}')
     X = single_data.data.iloc[:, :-1]
     y = single_data.data.iloc[:, -1]
+
     for fold_id, (train, test) in enumerate(kf.split(X, y)):
         for clf_id, clf in enumerate(clfs):
             clf.fit(X.iloc[train], y.iloc[train])
             y_pred = clf.predict(X.iloc[test])
             scores[clf_id, data_id, fold_id] = accuracy_score(y[test], y_pred)
-print(scores)
-mean_accuracy = np.mean(scores, axis=1)
 
-t_statistic_result = Statistic.t_student_for_all_files(clfs, names, scores, 0.05, True)
+end_time = time.time()
+
+print('\n___________________________________________')
+print('Experiment data:\n')
+print('Number of classifiers:', scores.shape[0])
+print('Number of data sets:', scores.shape[1])
+print('Number of folds:', scores.shape[2])
+print(f'\nTotal time: {"{:.2f}".format(end_time-start_time)} [s] '
+      f'\nPer iter: {"{:.2f}".format((end_time-start_time)/scores.shape[1])} [s]')
+print('___________________________________________')
+
+mean_scores = np.mean(scores, axis=2).T
+print("\nMean scores:\n", *names, sep="   ")
+print(*mean_scores, sep="\n")
+
+# t_statistic_result = Statistic.t_student_for_all_files(clfs, names, scores, 0.05, True)
 # show_data_sets_chart()
 
 # data = [x for x in data_sets if x.n == 'Iris2.csv']
