@@ -98,7 +98,8 @@ mean_scores = np.mean(scores, axis=2).T
 print("\nMean scores:\n", *names, sep="   ")
 print(*mean_scores, sep="\n")
 
-# t_statistic_result = Statistic.t_student_for_all_files(clfs, names, scores, 0.05, True)
+print(f'\n\nTest t-Studenta: \n{Statistic.t_student_for_all_files(clfs, names, scores, 0.05)}\n')
+print(f'\n\nTest Wilcoxona: \n{Statistic.wilcoxon(clfs, names, scores)}\n')
 # show_data_sets_chart()
 
 # data = [x for x in data_sets if x.n == 'Iris2.csv']

@@ -1,16 +1,16 @@
 import numpy as np
-from scipy.stats import ttest_ind
+from scipy.stats import ttest_ind, rankdata, ranksums
 from tabulate import tabulate
-
 
 def t_student_for_all_files(clfs, headers_array, scores, alfa = .05, print_result = False):
     shape = scores.shape
     number_of_files = shape[1]
-    rezult = np.zeros((len(clfs), len(clfs)))
+    result = np.zeros((len(clfs), len(clfs)))
     for i in range(number_of_files):
-        rezult += t_student(clfs, headers_array, scores[:, i, :], alfa, print_result)
-    return rezult
-
+        result += t_student(clfs, headers_array, scores[:, i, :], alfa, print_result)
+    headers_array_in_array = np.expand_dims(np.array(headers_array), axis=1)
+    result_table = tabulate(np.concatenate((headers_array_in_array, result), axis=1), headers_array)
+    return result_table
 
 def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
     t_statistic = np.zeros((len(clfs), len(clfs)))
@@ -56,3 +56,44 @@ def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
               f"significance (alpha = {alfa}):\n {significance_table} \n\nStatistically significantly better:\n {stat_better_table}")
         print('------------------------------------------------------------------')
     return stat_better
+
+def wilcoxon(clfs, headers_array, scores, alpha=.05, print_result = False):
+    # Średnie wyniki dla każdego z foldów
+    mean_scores = np.mean(scores, axis=2).T
+    #Przypisanie rang od 1 do (liczby estymatorów) w przypadku remisów uśredniamy
+    ranks = []
+    for ms in mean_scores:
+        ranks.append(rankdata(ms).tolist())
+    ranks = np.array(ranks)
+    #mean_ranks = np.mean(ranks, axis=0)
+
+    # Obliczenie t-statisticy i p-value
+    w_statistic = np.zeros((len(clfs), len(clfs)))
+    p_value = np.zeros((len(clfs), len(clfs)))
+    for i in range(len(clfs)):
+        for j in range(len(clfs)):
+            w_statistic[i, j], p_value[i, j] = ranksums(ranks.T[i], ranks.T[j])
+
+    advantage = np.zeros((len(clfs), len(clfs)))
+    advantage[w_statistic > 0] = 1
+
+    significance = np.zeros((len(clfs), len(clfs)))
+    significance[p_value <= alpha] = 1
+
+    # Wymnożenie macieży przewag i macieży znaczności
+    stat_better = significance * advantage
+    headers_array_in_array = np.expand_dims(np.array(headers_array), axis=1)
+    stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
+    if(print_result == True):
+        advantage_table = tabulate(np.concatenate((headers_array_in_array, advantage), axis=1), headers_array)
+        significance_table = tabulate(np.concatenate((headers_array_in_array, significance), axis=1), headers_array)
+
+        print("\nAdvantage:\n", advantage_table)
+        print(f"\nStatistical significance (alpha = {alpha}):\n{significance_table}")
+        print("\nStatistically significantly better::\n", stat_better_table)
+    return stat_better_table
+
+
+
+
+
