@@ -18,6 +18,8 @@ import time
 import math
 import plotly.graph_objects as go
 import plotly.offline as pyo
+import tqdm
+from tabulate import tabulate
 
 
 def add_data_sets_files():
@@ -71,55 +73,29 @@ def compute_scores():
 
 
 def show_experiment_data():
-    print('\n___________________________________________')
+    print('\n_____________________________________________________________')
     print('Experiment data:\n')
     print('Number of classifiers:', score_acc.shape[0])  # acc taken - could be anything else
     print('Number of data sets:', score_acc.shape[1])
     print('Number of folds:', score_acc.shape[2])
     print(f'\nTotal time: {"{:.2f}".format(end_time-start_time)} [s] '
           f'\nPer iter: {"{:.2f}".format((end_time-start_time)/score_acc.shape[1])} [s]')
-    print('___________________________________________')
+    print('_____________________________________________________________')
 
 
 def show_scores():
     for sc_id, score in enumerate(all_scores):
         mean_acc = np.mean(score, axis=2).T
         print(f"\n{scores_names[sc_id]} mean scores:")
-        print(*names, sep="   ")
-        print(*mean_acc, sep="\n")
-        print('\n___________________________________________')
-    #
-    # # -------------- ACCURACY -----------------
-    # mean_acc = np.mean(score_acc, axis=2).T
-    # print("\nAccuracy mean scores:")
-    # print(*names, sep="   ")
-    # print(*mean_acc, sep="\n")
-    # print('\n___________________________________________')
-    #
-    # # -------------- PRECISION -----------------
-    # mean_prec = np.mean(score_prec, axis=2).T
-    # print("\nPrecision mean scores:")
-    # print(*names, sep="   ")
-    # print(*mean_prec, sep="\n")
-    # print('\n___________________________________________')
-    #
-    # # -------------- RECALL -----------------
-    # mean_rec = np.mean(score_rec, axis=2).T
-    # print("\nRecall mean scores:")
-    # print(*names, sep="   ")
-    # print(*mean_rec, sep="\n")
-    # print('\n___________________________________________')
-    #
-    # # -------------- F1 -----------------
-    # mean_f1 = np.mean(score_f1, axis=2).T
-    # print("\nF1 mean scores:")
-    # print(*names, sep="   ")
-    # print(*mean_f1, sep="\n")
-    # print('\n___________________________________________')
+        table = tabulate(mean_acc, names)
+        print(table)
+        print(f'\nTest t-Studenta: \n{Statistic.t_student_for_all_files(clfs, names, score, 0.05)}')
+        print(f'\nTest Wilcoxona: \n{Statistic.wilcoxon(clfs, names, score)}\n')
+        print('\n_____________________________________________________________')
 
 
 def show_general_scores():
-    print('___________________________________________')
+    print('_____________________________________________________________')
     print('General means for each classifier:')
     print(*names, sep="                 ")
     print('Accuracy:')
@@ -132,10 +108,10 @@ def show_general_scores():
     print([float(sum(l))/len(l) for l in zip(*np.mean(score_f1, axis=2).T)])
 
 
-def show_statistics():
-    for score in all_scores:
-        print(f'\n\nTest t-Studenta: \n{Statistic.t_student_for_all_files(clfs, names, score, 0.05)}\n')
-        print(f'\n\nTest Wilcoxona: \n{Statistic.wilcoxon(clfs, names, score)}\n')
+# def show_statistics():
+#     for score in all_scores:
+#         print(f'\n\nTest t-Studenta: \n{Statistic.t_student_for_all_files(clfs, names, score, 0.05)}\n')
+#         print(f'\n\nTest Wilcoxona: \n{Statistic.wilcoxon(clfs, names, score)}\n')
 
 # ----------------==================--------------- CODE START HERE ----------------==================---------------
 
@@ -147,13 +123,13 @@ add_data_sets_files()
 n_splits = 5
 
 base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
-             KNeighborsClassifier(), GaussianNB()]
-clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=random_state_decision_trees),
-        bg.BaggingEnsemble(base_clfs)]
+             KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=1000)]
+clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=random_state_decision_trees), LogisticRegression(solver='lbfgs', max_iter=1000), SVC(probability=True),
+        bg.BaggingEnsemble(base_clfs, 'hard'), bg.BaggingEnsemble(base_clfs, 'soft_mean'), bg.BaggingEnsemble(base_clfs, 'soft_min'), bg.BaggingEnsemble(base_clfs, 'soft_max')]
 
-names = ['GNB', 'kNN', 'Tree (CART)', 'Hetero Bagging']
+names = ['GNB', 'kNN', 'Tree (CART)', 'Reg Log', 'SVM', 'HeteroBag Hard', 'HeteroBag Mean', 'HeteroBag Min', 'HeteroBag Max']
 combinations = ['hard', 'soft_mean', 'soft_min', 'soft_max']
-scores_names = ['accuracy', 'precision', 'recall', 'f1']
+scores_names = ['Accuracy', 'Precision', 'Recall', 'F1']
 
 kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
 
@@ -163,7 +139,7 @@ score_rec = np.zeros((len(clfs), len(data_sets), n_splits))
 score_f1 = np.zeros((len(clfs), len(data_sets), n_splits))
 all_scores = [score_acc, score_prec, score_rec, score_f1]
 
-for data_id, single_data in enumerate(data_sets):
+for data_id, single_data in tqdm.tqdm(enumerate(data_sets)):
     print(f'FILE: {single_data.file_name}')
     X = single_data.data.iloc[:, :-1]
     y = single_data.data.iloc[:, -1]
@@ -179,7 +155,6 @@ end_time = time.time()
 show_experiment_data()
 show_scores()
 show_general_scores()
-show_statistics()
 show_data_sets_chart()
 Charts.results_plot(names, score_acc, score_prec, score_rec, score_f1)
 
