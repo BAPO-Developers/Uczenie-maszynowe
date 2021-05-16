@@ -24,24 +24,31 @@ def add_data_sets_files():
     # data_sets.append(PrepareDataSets.PrepareDataSets('Iris2.csv', ','))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Iris.csv', ','))
 
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))
-    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[8] Appendicitis//appendicitis.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[9] Tic-Tac-Toe//tic-tac-toe.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[10] Heart//heart.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[12] Australian Credit//australian.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[13] Breast Cancer Wisconcil//wisconsin.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[14] Keppler//egzo.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[15] Magic Gamma//magic.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[16] Ringnorm//ring.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[17] South African Hearth//saheart.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[18] Titanic//titanic.csv'))
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[19] Congressional Voting Records//housevotes.csv'))
+   #  data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[1] Haberman//haberman.csv', ';'))
+  #  data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[2] Bupa//bupa.csv'))
+
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))# THIS
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))# THIS
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))# THIS
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))# THIS
+
+   # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
+    #data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[8] Appendicitis//appendicitis.csv'))
+
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[9] Tic-Tac-Toe//tic-tac-toe.csv'))# THIS
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[10] Heart//heart.csv'))# THIS
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[12] Australian Credit//australian.csv'))# THIS
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[13] Breast Cancer Wisconcil//wisconsin.csv'))# THIS
+
+    #data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[14] Keppler//egzo.csv'))
+
+    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[15] Magic Gamma//magic.csv'))# THIS
+
+    #data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[16] Ringnorm//ring.csv'))
+   # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[17] South African Hearth//saheart.csv'))
+    #data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[18] Titanic//titanic.csv'))
+
+   # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[19] Congressional Voting Records//housevotes.csv')) # THIS
 
 
 def show_data_sets_chart():
@@ -74,35 +81,41 @@ def show_experiment_data():
     print('___________________________________________')
 
 
-
 def show_scores():
-    # -------------- ACCURACY -----------------
-    mean_acc = np.mean(score_acc, axis=2).T
-    print("\nAccuracy mean scores:")
-    print(*names, sep="   ")
-    print(*mean_acc, sep="\n")
-    print('\n___________________________________________')
-
-    # -------------- PRECISION -----------------
-    mean_prec = np.mean(score_prec, axis=2).T
-    print("\nPrecision mean scores:")
-    print(*names, sep="   ")
-    print(*mean_prec, sep="\n")
-    print('\n___________________________________________')
-
-    # -------------- RECALL -----------------
-    mean_rec = np.mean(score_rec, axis=2).T
-    print("\nRecall mean scores:")
-    print(*names, sep="   ")
-    print(*mean_rec, sep="\n")
-    print('\n___________________________________________')
-
-    # -------------- F1 -----------------
-    mean_f1 = np.mean(score_f1, axis=2).T
-    print("\nF1 mean scores:")
-    print(*names, sep="   ")
-    print(*mean_f1, sep="\n")
-    print('\n___________________________________________')
+    for sc_id, score in enumerate(all_scores):
+        mean_acc = np.mean(score, axis=2).T
+        print(f"\n{scores_names[sc_id]} mean scores:")
+        print(*names, sep="   ")
+        print(*mean_acc, sep="\n")
+        print('\n___________________________________________')
+    #
+    # # -------------- ACCURACY -----------------
+    # mean_acc = np.mean(score_acc, axis=2).T
+    # print("\nAccuracy mean scores:")
+    # print(*names, sep="   ")
+    # print(*mean_acc, sep="\n")
+    # print('\n___________________________________________')
+    #
+    # # -------------- PRECISION -----------------
+    # mean_prec = np.mean(score_prec, axis=2).T
+    # print("\nPrecision mean scores:")
+    # print(*names, sep="   ")
+    # print(*mean_prec, sep="\n")
+    # print('\n___________________________________________')
+    #
+    # # -------------- RECALL -----------------
+    # mean_rec = np.mean(score_rec, axis=2).T
+    # print("\nRecall mean scores:")
+    # print(*names, sep="   ")
+    # print(*mean_rec, sep="\n")
+    # print('\n___________________________________________')
+    #
+    # # -------------- F1 -----------------
+    # mean_f1 = np.mean(score_f1, axis=2).T
+    # print("\nF1 mean scores:")
+    # print(*names, sep="   ")
+    # print(*mean_f1, sep="\n")
+    # print('\n___________________________________________')
 
 
 def show_general_scores():
@@ -166,7 +179,7 @@ end_time = time.time()
 show_experiment_data()
 show_scores()
 show_general_scores()
-# show_statistics()
-# show_data_sets_chart()
+show_statistics()
+show_data_sets_chart()
 Charts.results_plot(names, score_acc, score_prec, score_rec, score_f1)
 
