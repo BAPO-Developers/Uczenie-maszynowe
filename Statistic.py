@@ -57,7 +57,8 @@ def t_student(clfs, headers_array, scores, alfa = .05, print_result = False):
         print('------------------------------------------------------------------')
     return stat_better
 
-def wilcoxon(clfs, headers_array, scores, alpha=.05, print_result = False):
+
+def wilcoxon(clfs, headers_array, scores, alpha=.05, print_result=False):
     # Średnie wyniki dla każdego z foldów
     mean_scores = np.mean(scores, axis=2).T
     #Przypisanie rang od 1 do (liczby estymatorów) w przypadku remisów uśredniamy
