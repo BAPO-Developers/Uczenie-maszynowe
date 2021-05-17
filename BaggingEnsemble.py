@@ -5,9 +5,6 @@ import statistics
 
 
 class BaggingEnsemble(object):
-    n_features = []
-    n_elements = []
-    ensemble_ = []
 
     def __init__(self, base_estimators, type_voting='hard', random_state=None):
         self.base_estimatros = base_estimators # Klasyfikatory bazowe

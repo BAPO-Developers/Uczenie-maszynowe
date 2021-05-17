@@ -51,7 +51,7 @@ def results_plot(names, score_acc, score_prec, score_rec, score_f1):
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0.6, 0.9]
+                range=[0.6, 1]
             )),
         showlegend=True
     )
