@@ -84,7 +84,7 @@ def GenerateLatexTable(all_scores, dtn):
             arr_mean.append(np.mean(arr.copy()))
             arr = []
         arr_sets = np.round(arr_mean, 3)
-        alpha = list(map(chr, arr_sets))
+        alpha = list(map(str, arr_sets))
         temp = np.insert(alpha, 0, dtn[i])
         rows_2.append(temp.copy())
         arr_sets = []
