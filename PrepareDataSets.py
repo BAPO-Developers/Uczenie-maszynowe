@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 class PrepareDataSets(object):
     n_classes = 2
@@ -9,13 +9,13 @@ class PrepareDataSets(object):
     data = []
     show_details = False
 
-    def __init__(self, data_set_url, separator=';', show_details=False):
+    def __init__(self, data_set_url, separator=',', show_details=False):
         self.show_details = show_details
         self.add_file(data_set_url, separator)
 
-    def add_file(self, data_set_url, separator=';'):
+    def add_file(self, data_set_url, separator=','):
         self.data = pd.read_csv(data_set_url, separator)
-
+        # self.data = np.where(self.data == ';', ',', self.data)
         self.n_instances, self.n_atributes = self.data.shape
         firstpos = data_set_url.rfind("/")
         lastpos = data_set_url.rfind(".")
