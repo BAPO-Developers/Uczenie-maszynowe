@@ -58,13 +58,6 @@ def show_data_sets_chart():
     Charts.data_sets_chart(y, z, x)
 
 
-def compute_scores():
-    score_acc[clf_id, data_id, fold_id] = accuracy_score(y[test], y_pred)
-    # score_prec[clf_id, data_id, fold_id] = precision_score(y[test], y_pred)
-    # score_rec[clf_id, data_id, fold_id] = recall_score(y[test], y_pred)
-    # score_f1[clf_id, data_id, fold_id] = f1_score(y[test], y_pred)
-
-
 def show_experiment_data():
     print('\n_____________________________________________________________')
     print('Experiment data:\n')
@@ -93,17 +86,6 @@ def show_general_scores():
     print(*clfs_names, sep="                 ")
     print('Accuracy:')
     print([float(sum(l))/len(l) for l in zip(*np.mean(score_acc, axis=2).T)])
-    # print('Precision:')
-    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_prec, axis=2).T)]
-    # print('Recall:')
-    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_rec, axis=2).T)])
-    # print('F1:')
-    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_f1, axis=2).T)])
-
-
-def Table_Latexs():
-    df = data_sets[0].data
-    df.to_latex("Table.tex", index=False)
 
 
 # ----------------==================--------------- CODE START HERE ----------------==================---------------
@@ -126,11 +108,6 @@ scores_names = ['Accuracy', 'Precision', 'Recall', 'F1']
 kf = KFold(n_splits=n_splits, shuffle=True, random_state=1234)
 
 score_acc = np.zeros((len(clfs), len(data_sets), n_splits))
-# score_prec = np.zeros((len(clfs), len(data_sets), n_splits))
-# score_rec = np.zeros((len(clfs), len(data_sets), n_splits))
-# score_f1 = np.zeros((len(clfs), len(data_sets), n_splits))
-# all_scores = [score_acc, score_prec, score_rec, score_f1]
-
 
 for data_id, single_data in tqdm.tqdm(enumerate(data_sets)):
     print(f'FILE: {single_data.file_name}')
@@ -143,7 +120,8 @@ for data_id, single_data in tqdm.tqdm(enumerate(data_sets)):
             y_pred = clf.predict(X.iloc[test])
             score_acc[clf_id, data_id, fold_id] = accuracy_score(y[test], y_pred)
 
-#Nazwy plików baz danych
+# Nazwy plików baz danych
+
 dtn = []
 for n in data_sets:
     dtn.append(n.file_name)
@@ -155,18 +133,11 @@ np.save(r'Results\wilcoxon.npy', Statistic.wilcoxon(clfs, clfs_names, score_acc)
 for i, file_name in enumerate(dtn):
     np.save(rf'Results\t_student_{file_name}.npy', Statistic.t_student(clfs, clfs_names, score_acc[:, i, :], 0.05, True))
 
-# for i, file_name in enumerate(dtn):
-#     f = np.load(rf'Results\t_student_{file_name}.npy')
-#     print(f'Zaladowany t-student: {f}')
-# accuracy = [np.load(r'Results\accuracy.npy')]
-# data_files_names = np.load(r'Results\data_files_names.npy')
-# end_time = time.time()
+end_time = time.time()
 
 # show_experiment_data()
-#show_scores()
+# show_scores()
 # show_general_scores()
 # show_data_sets_chart()
 # Charts.results_plot(names, score_acc, score_prec, score_rec, score_f1)
 
-# print(dtn)
-# Charts.GenerateLatexTable(accuracy, data_files_names.tolist())

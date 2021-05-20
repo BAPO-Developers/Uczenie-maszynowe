@@ -66,14 +66,14 @@ def slicer_vectorized(a,start,end):
     return np.fromstring(b.tostring(),dtype=(str,end-start))
 
 
-def GenerateLatexTable(all_scores, dtn):
-    names = ['Datasets', 'GNB', 'kNN', 'Tree', 'Reg Log', 'SVM', 'HB Hard', 'HB Mean', 'HB Min', 'HB Max']
+def GenerateLatexTable(all_scores, dtn, t_s_arr):
+    names = ['Datasets','GNB' ,   'kNN' ,   'Tree' ,   'Reg Log ',  'SVM' ,  'HB-H' ,   'HB-M' ,  'HB-I',   'HB-X']
     number_of_vals = all_scores[0].shape[0] # 9
     number_of_data_sets = all_scores[0].shape[1] # 2
     number_of_folds = all_scores[0].shape[2] # 5
-    print('vals', number_of_vals)
-    print('sets', number_of_data_sets)
-    print('folds', number_of_folds)
+    # print('vals', number_of_vals)
+    # print('sets', number_of_data_sets)
+    # print('folds', number_of_folds)
     arr = []
     arr_mean = []
     rows_2 = [names]
@@ -91,12 +91,15 @@ def GenerateLatexTable(all_scores, dtn):
         for k in range(1, len(temp)):
             temp[k] = arrry[k - 1]
         rows_2.append(temp.copy())
+        rows_2.append(t_s_arr[i])
         arr_mean = []
+
     rows = rows_2.copy()
     # print('Tabulate Table:')
     # print(tabulate(rows, headers='firstrow'))
     table = texttable.Texttable()
     table.set_cols_align(["c"] * len(rows))
     table.set_deco(texttable.Texttable.HEADER | texttable.Texttable.VLINES)
-    print('\nTabulate Latex:')
+    print("\\begin{tabular}{lccccccccccccccccc}")
+    print('Tabulate Latex:')
     print(tabulate(rows, headers='firstrow', tablefmt='latex'))
