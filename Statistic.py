@@ -85,16 +85,15 @@ def wilcoxon(clfs, headers_array, scores, alpha=.05, print_result=False):
 
     # Wymnożenie macieży przewag i macieży znaczności
     stat_better = significance * advantage
-    headers_array_in_array = np.expand_dims(np.array(headers_array), axis=1)
-    stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
     if print_result == True:
+        headers_array_in_array = np.expand_dims(np.array(headers_array), axis=1)
+        stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
         advantage_table = tabulate(np.concatenate((headers_array_in_array, advantage), axis=1), headers_array)
         significance_table = tabulate(np.concatenate((headers_array_in_array, significance), axis=1), headers_array)
-
         print("\nAdvantage:\n", advantage_table)
         print(f"\nStatistical significance (alpha = {alpha}):\n{significance_table}")
         print("\nStatistically significantly better::\n", stat_better_table)
-    return stat_better_table
+    return stat_better
 
 
 
