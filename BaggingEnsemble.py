@@ -9,14 +9,14 @@ class BaggingEnsemble(object):
     def __init__(self, base_estimators, type_voting='hard', random_state=None):
         self.base_estimatros = base_estimators # Klasyfikatory bazowe
         self.type_voting = type_voting # Rodzaj kombinacja
-        self.random_state = random_state # Ziarno losowości
+        self.random_state = np.random.RandomState(random_state) # Ziarno losowości
+
 
     def ensemble_support_matrix(self, X):
         # Wyliczenie macierzy wsparcia
         probas_ = []
         for i, member_clf in enumerate(self.ensemble_):
             probas_.append(member_clf.predict_proba(X))
-        print(f'Wsparcia: probas_')
         return np.array(probas_)
 
     # Zrobienie baggingu i wyuczenie wszytskich modeli
@@ -28,12 +28,11 @@ class BaggingEnsemble(object):
         # Przechowywanie nazw klas (potrzebne do sprawdzanie czy model został nauczony)
         self.classes_ = np.unique(y_train)
         # Losowanie indeksów do podzbiorów z baggingu (min, max, (rozmiary tablicy))
-        self.subspace = np.random.randint(0, self.n_elements, (len(self.base_estimatros), self.n_elements))
-        # print(self.subspace)
+        subspace = self.random_state.randint(0, self.n_elements, size=(len(self.base_estimatros), self.n_elements))
         # Wyuczenie każdego z podzbiorów innym algorytmem
         self.ensemble_ = []
         for i in range(len(self.base_estimatros)):
-            self.ensemble_.append(clone(self.base_estimatros[i]).fit(X_train[self.subspace[i]], y_train[self.subspace[i]]))
+            self.ensemble_.append(clone(self.base_estimatros[i]).fit(X_train[subspace[i]], y_train[subspace[i]]))
 
     # Predykcja z wybraną metodą kombinacji
     def predict(self, X_test):
