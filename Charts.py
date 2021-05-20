@@ -61,10 +61,13 @@ def results_plot(names, score_acc, score_prec, score_rec, score_f1):
     fig.show()
 
 
+def slicer_vectorized(a,start,end):
+    b = a.view((str,1)).reshape(len(a),-1)[:,start:end]
+    return np.fromstring(b.tostring(),dtype=(str,end-start))
+
+
 def GenerateLatexTable(all_scores, dtn):
     names = ['Datasets', 'GNB', 'kNN', 'Tree', 'Reg Log', 'SVM', 'HB Hard', 'HB Mean', 'HB Min', 'HB Max']
-    vals1 = [1, 0.883, 0.849, 0.883, 0.869, 0.929, 0.926, 0.92,  0.883, 0.889]
-    vals2 = [2, 0.883, 0.849, 0.883, 0.869, 0.929, 0.926, 0.92,  0.883, 0.889]
     number_of_vals = all_scores[0].shape[0] # 9
     number_of_data_sets = all_scores[0].shape[1] # 2
     number_of_folds = all_scores[0].shape[2] # 5
@@ -73,9 +76,6 @@ def GenerateLatexTable(all_scores, dtn):
     print('folds', number_of_folds)
     arr = []
     arr_mean = []
-    arr_sets = []
-    alpha = []
-
     rows_2 = [names]
     for i in range(number_of_data_sets):
         for j in range(number_of_vals):
@@ -83,28 +83,18 @@ def GenerateLatexTable(all_scores, dtn):
                 arr.append(all_scores[0][j][i][t])
             arr_mean.append(np.mean(arr.copy()))
             arr = []
-        arr_sets = np.round(arr_mean, 3)
+        arr_sets = np.round(arr_mean, 10)
         alpha = list(map(str, arr_sets))
         temp = np.insert(alpha, 0, dtn[i])
+        newar = np.array(temp[1:])
+        arrry = slicer_vectorized(newar, 0, 5)
+        for k in range(1, len(temp)):
+            temp[k] = arrry[k - 1]
         rows_2.append(temp.copy())
-        arr_sets = []
         arr_mean = []
-    print(rows_2)
-    # for sc_id, score in enumerate(all_scores):
-    #     ll = []
-    #     oo = []
-    #     ii = []
-    #     mean_acc = np.mean(score, axis=2).T
-    #     ii = np.round(mean_acc, 3)
-    #     print(ii)
-    #     ll = ii[0]
-    #     oo = np.insert(ll, 0, sc_id)
-    #     print(oo)
-    #     rows.append(oo)
-    # # rows = [names, vals1, vals2]
     rows = rows_2.copy()
-    print('Tabulate Table:')
-    print(tabulate(rows, headers='firstrow'))
+    # print('Tabulate Table:')
+    # print(tabulate(rows, headers='firstrow'))
     table = texttable.Texttable()
     table.set_cols_align(["c"] * len(rows))
     table.set_deco(texttable.Texttable.HEADER | texttable.Texttable.VLINES)

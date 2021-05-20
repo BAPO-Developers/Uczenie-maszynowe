@@ -26,8 +26,8 @@ def add_data_sets_files():
 
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[3] Ionosphere//ionosphere.csv'))  # THIS
     data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[4] Monk//monk-2.csv'))# THIS
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))# THIS
-    # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))# THIS
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[5] Phoneme//phoneme.csv'))# THIS
+    data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[6] Banana//banana.csv'))# THIS
 
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[7] Pima//pima.csv'))
     # data_sets.append(PrepareDataSets.PrepareDataSets('Data sets//[8] Appendicitis//appendicitis.csv'))
@@ -93,12 +93,12 @@ def show_general_scores():
     print(*names, sep="                 ")
     print('Accuracy:')
     print([float(sum(l))/len(l) for l in zip(*np.mean(score_acc, axis=2).T)])
-    print('Precision:')
-    print([float(sum(l))/len(l) for l in zip(*np.mean(score_prec, axis=2).T)])
-    print('Recall:')
-    print([float(sum(l))/len(l) for l in zip(*np.mean(score_rec, axis=2).T)])
-    print('F1:')
-    print([float(sum(l))/len(l) for l in zip(*np.mean(score_f1, axis=2).T)])
+    # print('Precision:')
+    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_prec, axis=2).T)])
+    # print('Recall:')
+    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_rec, axis=2).T)])
+    # print('F1:')
+    # print([float(sum(l))/len(l) for l in zip(*np.mean(score_f1, axis=2).T)])
 
 
 def Table_Latexs():
@@ -113,7 +113,6 @@ random_state_decision_trees = 42
 data_sets = []
 add_data_sets_files()
 n_splits = 5
-# Table_Latexs() test
 
 base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
              KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=1000)]
