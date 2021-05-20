@@ -3,7 +3,6 @@ from scipy.stats import ttest_ind, rankdata, ranksums
 from tabulate import tabulate
 
 
-
 def t_student(headers_array, scores, alfa = .05, print_result = False):
     t_statistic = np.zeros((len(headers_array), len(headers_array)))
     p_value = np.zeros((len(headers_array), len(headers_array)))
