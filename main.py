@@ -10,7 +10,15 @@ import numpy as np
 import pandas as pd
 import tqdm
 
-datasets_names = ['saheart', 'titanic', 'housevotes', 'haberman', 'bupa', 'ionosphere', 'monk-2', 'phoneme',
+# Do wyjebania (za dlugo dziala albo wqle)
+# 'magic', - dlugo
+# 'spambase', - nie dziala
+# 'breastcanco', - nie dziala
+# 'cryotherapy', - nie dziala
+# 'australian', - nie dziala  (iteracje) -> dałem jedno 0 wiecej
+# 'spectfheart', - nie dziala (iteracje) -> dałem jedno 0 wiecej
+datasets_names = ['twonorm', 'australian', 'chess', 'spectfheart', 'german', 'wisconsin', 'sonar', 'ring',
+                  'saheart', 'titanic', 'housevotes', 'haberman', 'bupa', 'ionosphere', 'monk-2', 'phoneme',
                   'banana', 'pima', 'appendicitis', 'tic-tac-toe']
 # Bez 'magic', 'ring', egzo, heart'australian',
 random_state_decision_trees = 42
@@ -18,9 +26,9 @@ random_state_bagging = 1410
 n_splits = 5
 
 base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
-             KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=1000)]
+             KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=10000)]
 clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=random_state_decision_trees),
-        LogisticRegression(solver='lbfgs', max_iter=1000),
+        LogisticRegression(solver='lbfgs', max_iter=10000),
         SVC(probability=True), bg.BaggingEnsemble(base_clfs, 'hard', random_state_bagging),
         bg.BaggingEnsemble(base_clfs, 'soft_mean', random_state_bagging),
         bg.BaggingEnsemble(base_clfs, 'soft_min', random_state_bagging),
