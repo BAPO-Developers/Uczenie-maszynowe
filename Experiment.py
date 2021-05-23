@@ -15,12 +15,11 @@ import tqdm
 # 'spambase', - nie dziala
 # 'breastcanco', - nie dziala
 # 'cryotherapy', - nie dziala
-# 'australian', - nie dziala  (iteracje) -> dałem jedno 0 wiecej
-# 'spectfheart', - nie dziala (iteracje) -> dałem jedno 0 wiecej
+# 'australian', -> dałem jedno 0 wiecej
+# 'spectfheart', -> dałem jedno 0 wiecej
 datasets_names = ['twonorm', 'australian', 'chess', 'spectfheart', 'german', 'wisconsin', 'sonar', 'ring',
                   'saheart', 'titanic', 'housevotes', 'haberman', 'bupa', 'ionosphere', 'monk-2', 'phoneme',
                   'banana', 'pima', 'appendicitis', 'tic-tac-toe']
-# Bez 'magic', 'ring', egzo, heart'australian',
 random_state_decision_trees = 42
 random_state_bagging = 1410
 n_splits = 5
