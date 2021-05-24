@@ -69,37 +69,43 @@ def slicer_vectorized(a, start, end):
 def prepare_latex_data(t_student_test, clf_names):
     latex_array = []
     for t_s in t_student_test:
-        sign_t = [""]
-        t_s = t_s.T
-        for i in range(len(t_s)):
-            better_than = ""
-            check = []
-            for j in range(len(t_s)):
-                if t_s[j][i] == 1:
-                    check.append(1)
-                    better_than += str(j + 1)
-                    better_than += ','
-            if len(check) == len(clf_names) - 1:
-                better_than = "all"
-            if better_than != '-' and better_than != 'all':
-                sign_t.append(better_than[:-1])
-            else:
-                sign_t.append(better_than)
-
-        for u in range(1, len(sign_t)):
-            if len(sign_t[u]) == 0 or sign_t[u] is None:
-                sign_t[u] = "-"
-        latex_array.append(sign_t)
+        latex_array.append(compute_better_than_2D(clf_names, t_s.T, '', True))
     return latex_array
+
+
+def compute_better_than_2D(clfs_names, test, added_text, ret_type=False):
+    latex_array = []
+    sign_t = [added_text]
+    for i in range(len(test)):
+        better_than = ""
+        check = []
+        for j in range(len(test[i])):
+            if test[j][i] == 1:
+                check.append(1)
+                better_than += str(j + 1) + ','
+        if len(check) == len(clfs_names) - 1:
+            better_than = "all"
+        if better_than != '-' and better_than != 'all':
+            sign_t.append(better_than[:-1])
+        else:
+            sign_t.append(better_than)
+    for u in range(1, len(sign_t)):
+        if len(sign_t[u]) == 0 or sign_t[u] is None:
+            sign_t[u] = "-"
+    latex_array.append(sign_t)
+    if ret_type is True:
+        return sign_t
+    else:
+        return latex_array
 
 
 def generate_latex_table(all_scores, dtn, t_student_test, clf_names):
     t_s_arr = prepare_latex_data(t_student_test, clf_names)
     names = ['Datasets', 'GNB', 'kNN', 'Tree', 'Reg Log ', 'SVM', 'HB-H', 'HB-M', 'HB-I', 'HB-X']
     space_row = np.full(len(names), ' ', dtype=str)
-    number_of_vals = all_scores[0].shape[0]  # 9
-    number_of_data_sets = all_scores[0].shape[1]  # number of data sets
-    number_of_folds = all_scores[0].shape[2]  # 5
+    number_of_vals = all_scores[0].shape[0]
+    number_of_data_sets = all_scores[0].shape[1]
+    number_of_folds = all_scores[0].shape[2]
     arr = []
     arr_mean = []
     rows = [names]
@@ -109,14 +115,7 @@ def generate_latex_table(all_scores, dtn, t_student_test, clf_names):
                 arr.append(all_scores[0][j][i][t])
             arr_mean.append(np.mean(arr.copy()))
             arr = []
-        int_arr = np.round(arr_mean, 10)  # generating U10 array for full dataset name
-        str_arr = list(map(str, int_arr))  # int -> str array
-        temp = np.insert(str_arr, 0, dtn[i])  # inserting dataset file name
-        int_arr = np.array(temp[1:])  # selecting all apart from first
-        str_arr = slicer_vectorized(int_arr, 0, 5)  # setting U5 array
-        for k in range(1, len(temp)):  # switching items U10 -> U5
-            temp[k] = str_arr[k - 1]
-        rows.append(temp.copy())  # appending rows to final array
+        rows.append(prepare_means(arr_mean, dtn[i]))  # appending rows to final array
         rows.append(t_s_arr[i])
         rows.append(space_row)
         arr_mean = []
@@ -129,22 +128,43 @@ def generate_latex_table(all_scores, dtn, t_student_test, clf_names):
     print(tabulate(rows, headers='firstrow', tablefmt='latex'))
 
 
-def generate_single_square_latex_table(clfs_names, wilcoxon_test):
-    names = np.insert(clfs_names, 0, '', axis=0)
-    column_sums = wilcoxon_test.sum(axis=0)
-    str_arr = list(map(str, column_sums))
-    column_sums = np.insert(str_arr, 0, 'Sum')
-    rows = [names, column_sums]
-    print(column_sums)
-    # for j in range(len(wilcoxon_test)):
-    #     latex_array = [clfs_names[j]]
-    #     for k in range(len(wilcoxon_test[j])):
-    #         latex_array.append(wilcoxon_test[j][k])
-    #     rows.append(latex_array)
+def prepare_means(arr_mean, insert_str):
+    int_arr = np.round(arr_mean, 10)  # generating U10 array for full dataset name
+    str_arr = list(map(str, int_arr))  # int -> str array
+    temp = np.insert(str_arr, 0, insert_str)  # inserting dataset file name
+    int_arr = np.array(temp[1:])  # selecting all apart from first
+    str_arr = slicer_vectorized(int_arr, 0, 5)  # setting U5 array
+    for k in range(1, len(temp)):  # switching items U10 -> U5
+        temp[k] = str_arr[k - 1]
+    return temp
 
+
+def generate_single_square_latex_table(all_scores, clfs_names, wilcoxon_test):
+    wilcoxon_test = wilcoxon_test.T
+    print(wilcoxon_test)
+    mean_f = []
+    mean_d = []
+
+    for classifier in all_scores:
+        for data in classifier:
+            for fold in data:
+                mean_f.append(np.mean(fold))
+            mean_d.append(np.mean(mean_f))
+
+    int_arr = np.round(mean_d, 10)  # generating U10 array for full dataset name
+    str_arr = list(map(str, int_arr))  # int -> str array
+    temp = np.insert(str_arr, 0, 'Accuracy')  # inserting dataset file name
+    int_arr = np.array(temp[1:])  # selecting all apart from first
+    str_arr = slicer_vectorized(int_arr, 0, 5)  # setting U5 array
+    for k in range(1, len(temp)):  # switching items U10 -> U5
+        temp[k] = str_arr[k - 1]
+    latex_array = compute_better_than_2D(clfs_names, wilcoxon_test, "Lepsze od")
+    names = np.insert(clfs_names, 0, '', axis=0)
+    rows = [names, prepare_means(mean_d, "Accuracy"), latex_array[0]]
     table = texttable.Texttable()
     table.set_cols_align(["c"] * len(rows))
     table.set_deco(texttable.Texttable.HEADER | texttable.Texttable.VLINES)
     print("\\\nbegin{tabular}{lcccccccccc}")
     print('Tabulate Latex:')
     print(tabulate(rows, headers='firstrow', tablefmt='latex'))
+
