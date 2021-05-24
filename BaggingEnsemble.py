@@ -7,10 +7,9 @@ import statistics
 class BaggingEnsemble(object):
 
     def __init__(self, base_estimators, type_voting='hard', random_state=None):
-        self.base_estimatros = base_estimators # Klasyfikatory bazowe
-        self.type_voting = type_voting # Rodzaj kombinacja
-        self.random_state = np.random.RandomState(random_state) # Ziarno losowości
-
+        self.base_estimatros = base_estimators  # Klasyfikatory bazowe
+        self.type_voting = type_voting  # Rodzaj kombinacja
+        self.random_state = np.random.RandomState(random_state)  # Ziarno losowości
 
     def ensemble_support_matrix(self, X):
         # Wyliczenie macierzy wsparcia
@@ -21,8 +20,8 @@ class BaggingEnsemble(object):
 
     # Zrobienie baggingu i wyuczenie wszytskich modeli
     def fit(self, X_train, y_train):
-        X_train, y_train = check_X_y(X_train, y_train) # Sprawdzenie czy Z i y jest tego samegro rozmiaru
-        self.n_features = X_train.shape[1] # Zapisanie liczby atrybutów
+        X_train, y_train = check_X_y(X_train, y_train)  # Sprawdzenie czy Z i y jest tego samegro rozmiaru
+        self.n_features = X_train.shape[1]  # Zapisanie liczby atrybutów
         self.n_elements = X_train.shape[0]  # Zapisanie liczby instancji
 
         # Przechowywanie nazw klas (potrzebne do sprawdzanie czy model został nauczony)

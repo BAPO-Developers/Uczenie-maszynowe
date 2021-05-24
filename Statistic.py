@@ -3,7 +3,7 @@ from scipy.stats import ttest_ind, rankdata, ranksums
 from tabulate import tabulate
 
 
-def t_student(headers_array, scores, alfa = .05, print_result = False):
+def t_student(headers_array, scores, alfa=.05, print_result=False):
     t_statistic = np.zeros((len(headers_array), len(headers_array)))
     p_value = np.zeros((len(headers_array), len(headers_array)))
 
@@ -43,8 +43,9 @@ def t_student(headers_array, scores, alfa = .05, print_result = False):
         stat_better_table = tabulate(np.concatenate((headers_array_in_array, stat_better), axis=1), headers_array)
 
         print('------------------------------------------------------------------')
-        print(f"t-statistic:\n {t_statistic_table} \n\np-value:\n {p_value_table} \n\nAdvantage:\n {advantage_table} \n\nStatistical "
-              f"significance (alpha = {alfa}):\n {significance_table} \n\nStatistically significantly better:\n {stat_better_table}")
+        print(
+            f"t-statistic:\n {t_statistic_table} \n\np-value:\n {p_value_table} \n\nAdvantage:\n {advantage_table} \n\nStatistical "
+            f"significance (alpha = {alfa}):\n {significance_table} \n\nStatistically significantly better:\n {stat_better_table}")
         print('------------------------------------------------------------------')
     return stat_better
 
@@ -83,8 +84,3 @@ def wilcoxon(headers_array, scores, alpha=.05, print_result=False):
         print(f"\nStatistical significance (alpha = {alpha}):\n{significance_table}")
         print("\nStatistically significantly better::\n", stat_better_table)
     return stat_better
-
-
-
-
-

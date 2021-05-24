@@ -66,7 +66,7 @@ def slicer_vectorized(a, start, end):
     return np.fromstring(b.tostring(), dtype=(str, end - start))
 
 
-def GenerateLatexTable(all_scores, dtn, t_s_arr):
+def generate_latex_table(all_scores, dtn, t_s_arr):
     names = ['Datasets', 'GNB', 'kNN', 'Tree', 'Reg Log ', 'SVM', 'HB-H', 'HB-M', 'HB-I', 'HB-X']
     space_row = np.full(len(names), ' ', dtype=str)
     number_of_vals = all_scores[0].shape[0]  # 9
@@ -97,5 +97,22 @@ def GenerateLatexTable(all_scores, dtn, t_s_arr):
     table.set_cols_align(["c"] * len(rows))
     table.set_deco(texttable.Texttable.HEADER | texttable.Texttable.VLINES)
     print("\\begin{tabular}{lccccccccccccccccc}")
+    print('Tabulate Latex:')
+    print(tabulate(rows, headers='firstrow', tablefmt='latex'))
+
+
+def generate_single_square_latex_table(clfs_names, p_values):
+    names = np.insert(clfs_names, 0, '', axis=0)
+    rows = [names]
+    for j in range(len(p_values)):
+        latex_array = [clfs_names[j]]
+        for k in range(len(p_values[j])):
+            latex_array.append(p_values[j][k])
+        rows.append(latex_array)
+
+    table = texttable.Texttable()
+    table.set_cols_align(["c"] * len(rows))
+    table.set_deco(texttable.Texttable.HEADER | texttable.Texttable.VLINES)
+    print("\\\nbegin{tabular}{lcccccccccc}")
     print('Tabulate Latex:')
     print(tabulate(rows, headers='firstrow', tablefmt='latex'))
