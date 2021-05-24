@@ -11,7 +11,6 @@ def t_student(headers_array, scores, alfa=.05):
     for i in range(len(headers_array)):
         for j in range(len(headers_array)):
             t_statistic[i, j], p_value[i, j] = ttest_ind(scores[i], scores[j])
-    # print(t_statistic)
     # Wyliczenie przewagi danego algorytmu
     advantage = np.zeros((len(headers_array), len(headers_array)))
     advantage[t_statistic > 0] = 1

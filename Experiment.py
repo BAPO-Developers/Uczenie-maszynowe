@@ -13,15 +13,19 @@ import tqdm
 datasets_names = ['twonorm', 'australian', 'chess', 'spectfheart', 'german', 'wisconsin', 'sonar', 'ring',
                   'saheart', 'titanic', 'housevotes', 'haberman', 'bupa', 'ionosphere', 'monk-2', 'phoneme',
                   'banana', 'pima', 'appendicitis', 'tic-tac-toe']
+
 random_state_decision_trees = 42
 random_state_bagging = 1410
-n_splits = 5 # Liczba foldów walidacji krzyżowej
+random_state_svc = 399
+n_splits = 5  # Liczba foldów walidacji krzyżowej
 
-base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
+base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees),
+             SVC(probability=True, random_state=random_state_svc),
              KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=10000)]
 clfs = [GaussianNB(), KNeighborsClassifier(), DecisionTreeClassifier(random_state=random_state_decision_trees),
         LogisticRegression(solver='lbfgs', max_iter=10000),
-        SVC(probability=True), bg.BaggingEnsemble(base_clfs, 'hard', random_state_bagging),
+        SVC(probability=True, random_state=random_state_svc),
+        bg.BaggingEnsemble(base_clfs, 'hard', random_state_bagging),
         bg.BaggingEnsemble(base_clfs, 'soft_mean', random_state_bagging),
         bg.BaggingEnsemble(base_clfs, 'soft_min', random_state_bagging),
         bg.BaggingEnsemble(base_clfs, 'soft_max', random_state_bagging)]

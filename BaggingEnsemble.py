@@ -49,14 +49,13 @@ class BaggingEnsemble(object):
         predict_results = []
         # Właściwy kod metod kombinacji
         if self.type_voting == 'hard':
-            for X_element in iter(X_test):
-                # Podejmowanie decyzji na podstawie głosowania większościowego
-                pred_ = []
-                for member_clf in self.ensemble_:
-                    pred_.append(member_clf.predict(X_element.reshape(1, -1)))
-                new_pred = np.concatenate(pred_, axis=0)
-                predict_results.append(statistics.mode(new_pred))
-
+            prediction_before_voting = np.zeros((len(self.ensemble_), len(X_test)))
+            prediction = np.zeros(len(X_test))
+            for i, member_clf in enumerate(self.ensemble_):
+                prediction_before_voting[i] = member_clf.predict(X_test)
+            for i in range(len(X_test)):
+                prediction[i] = statistics.mode(prediction_before_voting[:, i])
+            return prediction
         elif self.type_voting == 'soft_mean':
             # Wyliczenie sredniej wartosci wsparcia
             average_support = np.mean(esm, axis=0)
@@ -79,7 +78,7 @@ class BaggingEnsemble(object):
             return self.classes_[prediction]
         else:
             raise Exception("Wrong combination flag")
-        return predict_results
+
 
     def ensemble_support_matrix(self, X):
         # Wyliczenie macierzy wsparcia
