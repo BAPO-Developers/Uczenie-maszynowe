@@ -3,26 +3,19 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve
+from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 import numpy as np
 import pandas as pd
 import tqdm
 
-# Do wyjebania (za dlugo dziala albo wqle)
-# 'magic', - dlugo
-# 'spambase', - nie dziala
-# 'breastcanco', - nie dziala
-# 'cryotherapy', - nie dziala
-# 'australian', -> dałem jedno 0 wiecej
-# 'spectfheart', -> dałem jedno 0 wiecej
 datasets_names = ['twonorm', 'australian', 'chess', 'spectfheart', 'german', 'wisconsin', 'sonar', 'ring',
                   'saheart', 'titanic', 'housevotes', 'haberman', 'bupa', 'ionosphere', 'monk-2', 'phoneme',
                   'banana', 'pima', 'appendicitis', 'tic-tac-toe']
 random_state_decision_trees = 42
 random_state_bagging = 1410
-n_splits = 5
+n_splits = 5 # Liczba foldów walidacji krzyżowej
 
 base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees), SVC(probability=True),
              KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=10000)]
