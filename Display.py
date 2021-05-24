@@ -66,7 +66,35 @@ def slicer_vectorized(a, start, end):
     return np.fromstring(b.tostring(), dtype=(str, end - start))
 
 
-def generate_latex_table(all_scores, dtn, t_s_arr):
+def prepare_latex_data(t_student_test, clf_names):
+    latex_array = []
+    for t_s in t_student_test:
+        sign_t = [""]
+        t_s = t_s.T
+        for i in range(len(t_s)):
+            better_than = ""
+            check = []
+            for j in range(len(t_s)):
+                if t_s[j][i] == 1:
+                    check.append(1)
+                    better_than += str(j + 1)
+                    better_than += ','
+            if len(check) == len(clf_names) - 1:
+                better_than = "all"
+            if better_than != '-' and better_than != 'all':
+                sign_t.append(better_than[:-1])
+            else:
+                sign_t.append(better_than)
+
+        for u in range(1, len(sign_t)):
+            if len(sign_t[u]) == 0 or sign_t[u] is None:
+                sign_t[u] = "-"
+        latex_array.append(sign_t)
+    return latex_array
+
+
+def generate_latex_table(all_scores, dtn, t_student_test, clf_names):
+    t_s_arr = prepare_latex_data(t_student_test, clf_names)
     names = ['Datasets', 'GNB', 'kNN', 'Tree', 'Reg Log ', 'SVM', 'HB-H', 'HB-M', 'HB-I', 'HB-X']
     space_row = np.full(len(names), ' ', dtype=str)
     number_of_vals = all_scores[0].shape[0]  # 9
