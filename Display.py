@@ -129,14 +129,18 @@ def generate_latex_table(all_scores, dtn, t_student_test, clf_names):
     print(tabulate(rows, headers='firstrow', tablefmt='latex'))
 
 
-def generate_single_square_latex_table(clfs_names, p_values):
+def generate_single_square_latex_table(clfs_names, wilcoxon_test):
     names = np.insert(clfs_names, 0, '', axis=0)
-    rows = [names]
-    for j in range(len(p_values)):
-        latex_array = [clfs_names[j]]
-        for k in range(len(p_values[j])):
-            latex_array.append(p_values[j][k])
-        rows.append(latex_array)
+    column_sums = wilcoxon_test.sum(axis=0)
+    str_arr = list(map(str, column_sums))
+    column_sums = np.insert(str_arr, 0, 'Sum')
+    rows = [names, column_sums]
+    print(column_sums)
+    # for j in range(len(wilcoxon_test)):
+    #     latex_array = [clfs_names[j]]
+    #     for k in range(len(wilcoxon_test[j])):
+    #         latex_array.append(wilcoxon_test[j][k])
+    #     rows.append(latex_array)
 
     table = texttable.Texttable()
     table.set_cols_align(["c"] * len(rows))
