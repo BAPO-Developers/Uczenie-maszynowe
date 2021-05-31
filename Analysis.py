@@ -8,7 +8,7 @@ data_files_names = np.load(r'Results\data_files_names.npy')  # Nazwy użytych ba
 clf_names = np.load('Results\clf_names.npy')  # Nazwy klasyfikatorów bazowych
 
 # 2-wymiarowa tablica z testem Wilcoxona (poziom ufności 0.05)
-wilcoxon_test = Statistic.wilcoxon(clf_names.tolist(), accuracy, 0.05)
+wilcoxon_test, mean_ranks = Statistic.wilcoxon(clf_names.tolist(), accuracy, 0.05)
 # Test t-Studenta przeprowadzony dla wszytskich zbiorów danych (poziomu ufności 0.05)
 t_student_test = []
 for i, file_name in enumerate(data_files_names):

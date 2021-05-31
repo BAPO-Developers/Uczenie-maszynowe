@@ -1,4 +1,3 @@
-import latextable
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import numpy as np

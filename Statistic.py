@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import ttest_ind, rankdata, ranksums
-from tabulate import tabulate
 
 
 def t_student(headers_array, scores, alfa=.05):
@@ -32,7 +31,7 @@ def wilcoxon(headers_array, scores, alpha=.05):
     for ms in mean_scores:
         ranks.append(rankdata(ms).tolist())
     ranks = np.array(ranks)
-    # mean_ranks = np.mean(ranks, axis=0)
+    mean_ranks = np.mean(ranks, axis=0)
 
     # Obliczenie t-statisticy i p-value
     w_statistic = np.zeros((len(headers_array), len(headers_array)))
@@ -49,4 +48,4 @@ def wilcoxon(headers_array, scores, alpha=.05):
 
     # Wymnożenie macieży przewag i macieży znaczności
     stat_better = significance * advantage
-    return stat_better
+    return stat_better, mean_ranks
