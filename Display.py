@@ -143,16 +143,16 @@ def generate_single_square_latex_table(all_scores, clfs_names, wilcoxon_test):
     print(wilcoxon_test)
     mean_f = []
     mean_d = []
-
-    for classifier in all_scores:
-        for data in classifier:
-            for fold in data:
-                mean_f.append(np.mean(fold))
-            mean_d.append(np.mean(mean_f))
-
+    #
+    # for classifier in all_scores:
+    #     for data in classifier:
+    #         for fold in data:
+    #             mean_f.append(np.mean(fold))
+    #         mean_d.append(np.mean(mean_f))
+    mean_d = all_scores
     int_arr = np.round(mean_d, 10)  # generating U10 array for full dataset name
     str_arr = list(map(str, int_arr))  # int -> str array
-    temp = np.insert(str_arr, 0, 'Accuracy')  # inserting dataset file name
+    temp = np.insert(str_arr, 0, 'Mean Ranks')  # inserting dataset file name
     int_arr = np.array(temp[1:])  # selecting all apart from first
     str_arr = slicer_vectorized(int_arr, 0, 5)  # setting U5 array
     for k in range(1, len(temp)):  # switching items U10 -> U5
