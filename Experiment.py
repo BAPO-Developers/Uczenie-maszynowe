@@ -19,6 +19,19 @@ random_state_bagging = 1410
 random_state_svc = 399
 n_splits = 5  # Liczba foldów walidacji krzyżowej
 
+# Instances = []
+# Atributes = []
+#
+# for single_data in datasets_names:
+#     single_data = pd.read_csv(fr'Data_sets\{single_data}.csv', ',')
+#     Instances.append(single_data.shape[0])
+#     Atributes.append(single_data.shape[1]-1)
+#
+# print(Instances)
+# print(Atributes)
+# np.save(r'Results\instances.npy', np.array(Instances))
+# np.save(r'Results\atributes.npy', np.array(Atributes))
+
 base_clfs = [DecisionTreeClassifier(random_state=random_state_decision_trees),
              SVC(probability=True, random_state=random_state_svc),
              KNeighborsClassifier(), GaussianNB(), LogisticRegression(solver='lbfgs', max_iter=10000)]

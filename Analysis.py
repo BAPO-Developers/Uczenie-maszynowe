@@ -17,3 +17,4 @@ for i, file_name in enumerate(data_files_names):
 
 Display.generate_latex_table([accuracy], data_files_names.tolist(), t_student_test, clf_names)
 Display.generate_single_square_latex_table(mean_ranks, clf_names, wilcoxon_test)
+

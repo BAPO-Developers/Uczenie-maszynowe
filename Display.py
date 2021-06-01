@@ -141,14 +141,20 @@ def prepare_means(arr_mean, insert_str):
 def generate_single_square_latex_table(all_scores, clfs_names, wilcoxon_test):
     wilcoxon_test = wilcoxon_test.T
     print(wilcoxon_test)
-    mean_f = []
-    mean_d = []
+    # mean_f = []
+    # mean_d = []
     #
     # for classifier in all_scores:
     #     for data in classifier:
     #         for fold in data:
     #             mean_f.append(np.mean(fold))
-    #         mean_d.append(np.mean(mean_f))
+    #         # print(mean_f, 'mean_f')
+    #         # mean_d.append(np.mean(mean_f))
+    #         mean_d.append(mean_f)
+    #         mean_f=[]
+    # mean_for_datasets = [float(sum(l))/len(l) for l in zip(*mean_d)]
+    # print(mean_for_datasets)
+    # np.save(r'Results\mean_for_datasets.npy', np.array(mean_for_datasets))
     mean_d = all_scores
     int_arr = np.round(mean_d, 10)  # generating U10 array for full dataset name
     str_arr = list(map(str, int_arr))  # int -> str array
